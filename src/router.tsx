@@ -5,114 +5,157 @@ import Inicio from './pages/Inicio';
 import ErrorPagina from './pages/ErrorPagina';
 import { RUTAS as R } from './lib/rutas';
 export const routes: RouteObject[] = [
-    {
-        path: R.inicio,
-        Component: Layout,
-        hydrateFallbackElement: <p role="status">Cargando aplicación…</p>,
-        errorElement: <ErrorPagina />,
+  {
+    path: R.inicio,
+    Component: Layout,
+    hydrateFallbackElement: <p role="status">Cargando aplicación…</p>,
+    errorElement: <ErrorPagina />,
+    children: [
+      { index: true, Component: Inicio },
+      {
+        path: R.eventos,
+        lazy: async () => ({
+          Component: (await import('./pages/CatalogoEventos')).default,
+        }),
+      },
+      {
+        path: R.eventoPatron,
+        lazy: async () => ({
+          Component: (await import('./pages/DetalleEvento')).default,
+        }),
+      },
+      {
+        path: R.artistas,
+        lazy: async () => ({
+          Component: (await import('./pages/ListaArtistas')).default,
+        }),
+      },
+      {
+        path: R.artistaPatron,
+        lazy: async () => ({
+          Component: (await import('./pages/DetalleArtista')).default,
+        }),
+      },
+      {
+        path: R.sedes,
+        lazy: async () => ({
+          Component: (await import('./pages/ListaSedes')).default,
+        }),
+      },
+      {
+        path: R.sedePatron,
+        lazy: async () => ({
+          Component: (await import('./pages/DetalleSede')).default,
+        }),
+      },
+      {
+        Component: SoloAnonimo,
         children: [
-            { index: true, Component: Inicio },
-            {
-                path: R.eventos,
-                lazy: async () => ({
-                    Component: (await import('./pages/CatalogoEventos')).default,
-                }),
-            },
-            {
-                path: R.eventoPatron,
-                lazy: async () => ({
-                    Component: (await import('./pages/DetalleEvento')).default,
-                }),
-            },
-            {
-                path: R.artistas,
-                lazy: async () => ({
-                    Component: (await import('./pages/ListaArtistas')).default,
-                }),
-            },
-            {
-                path: R.artistaPatron,
-                lazy: async () => ({
-                    Component: (await import('./pages/DetalleArtista')).default,
-                }),
-            },
-            {
-                path: R.sedes,
-                lazy: async () => ({
-                    Component: (await import('./pages/ListaSedes')).default,
-                }),
-            },
-            {
-                path: R.sedePatron,
-                lazy: async () => ({
-                    Component: (await import('./pages/DetalleSede')).default,
-                }),
-            },
-            {
-                Component: SoloAnonimo,
-                children: [
-                    {
-                        path: R.login,
-                        lazy: async () => ({
-                            Component: (await import('./pages/Login')).default,
-                        }),
-                    },
-                    {
-                        path: R.registro,
-                        lazy: async () => ({
-                            Component: (await import('./pages/Registro')).default,
-                        }),
-                    },
-                ],
-            },
-            {
-                Component: RutaProtegida,
-                children: [
-                    {
-                        path: R.cuenta,
-                        lazy: async () => ({
-                            Component: (await import('./pages/Cuenta')).default,
-                        }),
-                    },
-                    {
-                        element: <RutaPorRol roles={['ADMIN']} />,
-                        children: [
-                            {
-                                path: R.admin,
-                                lazy: async () => ({
-                                    Component: (await import('./pages/AdminEventos')).default,
-                                }),
-                            },
-                            {
-                                path: R.nuevo,
-                                lazy: async () => ({
-                                    Component: (await import('./pages/AdminCrearEvento')).default,
-                                }),
-                            },
-                            {
-                                path: R.gestionPatron,
-                                lazy: async () => ({
-                                    Component: (await import('./pages/AdminGestionEvento'))
-                                        .default,
-                                }),
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                path: R.sinPermisos,
-                lazy: async () => ({
-                    Component: (await import('./pages/SinPermisos')).default,
-                }),
-            },
-            {
-                path: R.noEncontrada,
-                lazy: async () => ({
-                    Component: (await import('./pages/NoEncontrada')).default,
-                }),
-            },
+          {
+            path: R.login,
+            lazy: async () => ({
+              Component: (await import('./pages/Login')).default,
+            }),
+          },
+          {
+            path: R.registro,
+            lazy: async () => ({
+              Component: (await import('./pages/Registro')).default,
+            }),
+          },
         ],
-    },
+      },
+      {
+        Component: RutaProtegida,
+        children: [
+          {
+            path: R.cuenta,
+            lazy: async () => ({
+              Component: (await import('./pages/Cuenta')).default,
+            }),
+          },
+          {
+            element: <RutaPorRol roles={['USER']} />,
+            children: [
+              {
+                path: R.tickets,
+                lazy: async () => ({
+                  Component: (await import('./pages/MisTickets')).default,
+                }),
+              },
+              {
+                path: R.ticketPatron,
+                lazy: async () => ({
+                  Component: (await import('./pages/DetalleTicket')).default,
+                }),
+              },
+              {
+                path: R.confirmacionPatron,
+                lazy: async () => ({
+                  Component: (await import('./pages/ConfirmacionCompra'))
+                    .default,
+                }),
+              },
+            ],
+          },
+          {
+            element: <RutaPorRol roles={['STAFF', 'ADMIN']} />,
+            children: [
+              {
+                path: R.validacion,
+                lazy: async () => ({
+                  Component: (await import('./pages/ValidacionIngreso'))
+                    .default,
+                }),
+              },
+              {
+                path: R.pagadosPatron,
+                lazy: async () => ({
+                  Component: (await import('./pages/TicketsPagadosEvento'))
+                    .default,
+                }),
+              },
+            ],
+          },
+          {
+            element: <RutaPorRol roles={['ADMIN']} />,
+            children: [
+              {
+                path: R.admin,
+                lazy: async () => ({
+                  Component: (await import('./pages/AdminEventos')).default,
+                }),
+              },
+              {
+                path: R.nuevo,
+                lazy: async () => ({
+                  Component: (await import('./pages/AdminCrearEvento')).default,
+                }),
+              },
+              {
+                path: R.gestionPatron,
+                lazy: async () => ({
+                  Component: (await import('./pages/AdminGestionEvento'))
+                    .default,
+                }),
+              },
+            ],
+          },
+        ],
+      },
+      {
+        path: R.sinPermisos,
+        lazy: async () => ({
+          Component: (await import('./pages/SinPermisos')).default,
+        }),
+      },
+      {
+        path: R.noEncontrada,
+        lazy: async () => ({
+          Component: (await import('./pages/NoEncontrada')).default,
+        }),
+      },
+    ],
+  },
 ];
 export const crearRouter = () => createBrowserRouter(routes);
